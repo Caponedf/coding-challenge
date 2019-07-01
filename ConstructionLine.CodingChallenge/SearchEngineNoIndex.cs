@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ConstructionLine.CodingChallenge
@@ -9,12 +10,17 @@ namespace ConstructionLine.CodingChallenge
 
         public SearchEngineNoIndex(List<Shirt> shirts)
         {
-            _shirts = shirts;
+            _shirts = shirts ?? throw new ArgumentException($"Parameter shirts is mandatory.", nameof(shirts));
         }
 
 
         public SearchResults Search(SearchOptions options)
         {
+            if (options == null)
+            {
+                throw new ArgumentException($"Parameter option is mandatory.", nameof(options));
+            }
+
             var colorCounts = Color.All.ToDictionary(k => k.Id, s => new ColorCount {Color = s});
             var sizeCounts = Size.All.ToDictionary(k => k.Id, s => new SizeCount { Size = s });
             var shirts = new List<Shirt>();
@@ -34,7 +40,7 @@ namespace ConstructionLine.CodingChallenge
                     colorCounts[shirt.Color.Id].Count++;
                 }
 
-                if (colorMath || sizeMath)
+                if (colorMath && sizeMath)
                 {
                     shirts.Add(shirt);
                 }

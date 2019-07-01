@@ -23,16 +23,28 @@ namespace ConstructionLine.CodingChallenge.Tests
             var resultingShirtIds = shirts.Select(s => s.Id).ToList();
             var sizeIds = options.Sizes.Select(s => s.Id).ToList();
             var colorIds = options.Colors.Select(c => c.Id).ToList();
-
+            
             foreach (var shirt in shirts)
             {
-                if (sizeIds.Contains(shirt.Size.Id)
-                    && colorIds.Contains(shirt.Color.Id)
-                    && !resultingShirtIds.Contains(shirt.Id))
+                if ((!options.Sizes.Any() || sizeIds.Contains(shirt.Size.Id)) && (!options.Colors.Any() || colorIds.Contains(shirt.Color.Id)))
                 {
-                    Assert.Fail($"'{shirt.Name}' with Size '{shirt.Size.Name}' and Color '{shirt.Color.Name}' not found in results, " +
-                                $"when selected sizes where '{string.Join(",", options.Sizes.Select(s => s.Name))}' " +
-                                $"and colors '{string.Join(",", options.Colors.Select(c => c.Name))}'");
+                    if (!resultingShirtIds.Contains(shirt.Id))
+                    {
+                        Assert.Fail(
+                            $"'{shirt.Name}' with Size '{shirt.Size.Name}' and Color '{shirt.Color.Name}' not found in results, " +
+                            $"when selected sizes where '{string.Join(",", options.Sizes.Select(s => s.Name))}' " +
+                            $"and colors '{string.Join(",", options.Colors.Select(c => c.Name))}'");
+                    }
+                }
+                else
+                {
+                    if (resultingShirtIds.Contains(shirt.Id))
+                    {
+                        Assert.Fail(
+                            $"'{shirt.Name}' with Size '{shirt.Size.Name}' and Color '{shirt.Color.Name}' found in results, " +
+                            $"when selected sizes where '{string.Join(",", options.Sizes.Select(s => s.Name))}' " +
+                            $"and colors '{string.Join(",", options.Colors.Select(c => c.Name))}'");
+                    }
                 }
             }
         }
