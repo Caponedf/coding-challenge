@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 
@@ -6,6 +7,15 @@ namespace ConstructionLine.CodingChallenge.Tests
 {
     public class SearchEngineTestsBase
     {
+        protected static Dictionary<Type, ISearchEngine> GetSearchEngines(List<Shirt> shirts)
+        {
+            return new Dictionary<Type, ISearchEngine>
+            {
+                {typeof(SearchEngineNoIndex), new SearchEngineNoIndex(shirts)},
+                {typeof(SearchEngineWithIndex), new SearchEngineWithIndex(shirts)},
+            };
+        }
+
         protected static void AssertResults(List<Shirt> shirts, SearchOptions options)
         {
             Assert.That(shirts, Is.Not.Null);

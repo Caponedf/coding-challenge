@@ -10,32 +10,93 @@ namespace ConstructionLine.CodingChallenge.Tests
     public class SearchEnginePerformanceTests : SearchEngineTestsBase
     {
         private List<Shirt> _shirts;
-        private SearchEngine _searchEngine;
+        private Dictionary<Type, ISearchEngine> _searchEngine;
 
         [SetUp]
         public void Setup()
         {
-            
             var dataBuilder = new SampleDataBuilder(50000);
 
             _shirts = dataBuilder.CreateShirts();
 
-            _searchEngine = new SearchEngine(_shirts);
+            _searchEngine = GetSearchEngines(_shirts);
         }
 
 
         [Test]
-        public void PerformanceTest()
+        [TestCase(typeof(SearchEngineNoIndex))]
+        [TestCase(typeof(SearchEngineWithIndex))]
+        public void PerformanceTest_Red_Color(Type searchEngineType)
         {
-            var sw = new Stopwatch();
-            sw.Start();
-
             var options = new SearchOptions
             {
                 Colors = new List<Color> { Color.Red }
             };
 
-            var results = _searchEngine.Search(options);
+            PerformanceTest(searchEngineType, options);
+        }
+
+        [Test]
+        [TestCase(typeof(SearchEngineNoIndex))]
+        [TestCase(typeof(SearchEngineWithIndex))]
+        public void PerformanceTest_Large_Size(Type searchEngineType)
+        {
+            var options = new SearchOptions
+            {
+                Sizes = new List<Size> { Size.Large }
+            };
+
+            PerformanceTest(searchEngineType, options);
+        }
+
+        [Test]
+        [TestCase(typeof(SearchEngineNoIndex))]
+        [TestCase(typeof(SearchEngineWithIndex))]
+        public void PerformanceTest_Red_Color_Small(Type searchEngineType)
+        {
+            var options = new SearchOptions
+            {
+                Colors = new List<Color> { Color.Red },
+                Sizes = new List<Size> { Size.Small}
+            };
+
+            PerformanceTest(searchEngineType, options);
+        }
+
+        [Test]
+        [TestCase(typeof(SearchEngineNoIndex))]
+        [TestCase(typeof(SearchEngineWithIndex))]
+        public void PerformanceTest_Red_Color_Small_And_Medium(Type searchEngineType)
+        {
+            var options = new SearchOptions
+            {
+                Colors = new List<Color> { Color.Red },
+                Sizes = new List<Size> { Size.Small, Size.Medium }
+            };
+
+            PerformanceTest(searchEngineType, options);
+        }
+
+        [Test]
+        [TestCase(typeof(SearchEngineNoIndex))]
+        [TestCase(typeof(SearchEngineWithIndex))]
+        public void PerformanceTest_Red_Color_And_White_Small_And_Medium(Type searchEngineType)
+        {
+            var options = new SearchOptions
+            {
+                Colors = new List<Color> { Color.Red, Color.White },
+                Sizes = new List<Size> { Size.Small, Size.Medium }
+            };
+
+            PerformanceTest(searchEngineType, options);
+        }
+
+        private void PerformanceTest(Type searchEngineType, SearchOptions options)
+        {
+            var sw = new Stopwatch();
+            sw.Start();
+
+            var results = _searchEngine[searchEngineType].Search(options);
 
             sw.Stop();
             Console.WriteLine($"Test fixture finished in {sw.ElapsedMilliseconds} milliseconds");

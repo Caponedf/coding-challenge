@@ -8,7 +8,9 @@ namespace ConstructionLine.CodingChallenge.Tests
     public class SearchEngineTests : SearchEngineTestsBase
     {
         [Test]
-        public void Test()
+        [TestCase(typeof(SearchEngineNoIndex))]
+        [TestCase(typeof(SearchEngineWithIndex))]
+        public void Test(Type searchEngineType)
         {
             var shirts = new List<Shirt>
             {
@@ -17,7 +19,7 @@ namespace ConstructionLine.CodingChallenge.Tests
                 new Shirt(Guid.NewGuid(), "Blue - Large", Size.Large, Color.Blue),
             };
 
-            var searchEngine = new SearchEngine(shirts);
+            var searchEngine = GetSearchEngines(shirts)[searchEngineType];
 
             var searchOptions = new SearchOptions
             {
