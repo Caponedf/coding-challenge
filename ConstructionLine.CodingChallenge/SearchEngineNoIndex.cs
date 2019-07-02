@@ -16,7 +16,6 @@ namespace ConstructionLine.CodingChallenge
             _shirts = shirts ?? throw new ArgumentException($"Parameter shirts is mandatory.", nameof(shirts));
         }
 
-
         public SearchResults Search(SearchOptions options)
         {
             if (options == null)

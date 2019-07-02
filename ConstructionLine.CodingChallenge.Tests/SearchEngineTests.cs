@@ -58,6 +58,7 @@ namespace ConstructionLine.CodingChallenge.Tests
 
             Assert.AreEqual(1, results.ColorCounts.First(f => f.Color.Id == Color.Red.Id).Count);
             Assert.AreEqual(1, results.SizeCounts.First(f => f.Size.Id == Size.Large.Id).Count);
+            Assert.AreEqual(1, results.Shirts.Count);
 
             AssertResults(results.Shirts, searchOptions);
             AssertSizeCounts(shirts, searchOptions, results.SizeCounts);
