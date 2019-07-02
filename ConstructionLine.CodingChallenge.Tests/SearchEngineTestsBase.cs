@@ -7,6 +7,9 @@ namespace ConstructionLine.CodingChallenge.Tests
 {
     public class SearchEngineTestsBase
     {
+        /// <summary>
+        /// Simple factory for different implementations of <see cref="ISearchEngine"/>. 
+        /// </summary>
         protected static Dictionary<Type, ISearchEngine> GetSearchEngines(List<Shirt> shirts)
         {
             return new Dictionary<Type, ISearchEngine>
@@ -38,6 +41,7 @@ namespace ConstructionLine.CodingChallenge.Tests
                 }
                 else
                 {
+                    // This would check false positive filter results.
                     if (resultingShirtIds.Contains(shirt.Id))
                     {
                         Assert.Fail(
@@ -49,7 +53,6 @@ namespace ConstructionLine.CodingChallenge.Tests
             }
         }
 
-
         protected static void AssertSizeCounts(List<Shirt> shirts, SearchOptions searchOptions, List<SizeCount> sizeCounts)
         {
             Assert.That(sizeCounts, Is.Not.Null);
@@ -60,8 +63,10 @@ namespace ConstructionLine.CodingChallenge.Tests
                 Assert.That(sizeCount, Is.Not.Null, $"Size count for '{size.Name}' not found in results");
 
                 var expectedSizeCount = shirts
-                    .Count(s => s.Size.Id == size.Id
-                                && (!searchOptions.Colors.Any() || searchOptions.Colors.Select(c => c.Id).Contains(s.Color.Id)));
+                    // I believe this Where is necessary in order to get correct number of shirts for filtered results.
+                    .Where(c => !searchOptions.Sizes.Any() || searchOptions.Sizes.Select(s => s.Id).Contains(c.Size.Id))
+                    .Where(s => s.Size.Id == size.Id)
+                    .Count(s => !searchOptions.Colors.Any() || searchOptions.Colors.Select(c => c.Id).Contains(s.Color.Id));
 
                 Assert.That(sizeCount.Count, Is.EqualTo(expectedSizeCount), 
                     $"Size count for '{sizeCount.Size.Name}' showing '{sizeCount.Count}' should be '{expectedSizeCount}'");
@@ -79,8 +84,10 @@ namespace ConstructionLine.CodingChallenge.Tests
                 Assert.That(colorCount, Is.Not.Null, $"Color count for '{color.Name}' not found in results");
 
                 var expectedColorCount = shirts
-                    .Count(c => c.Color.Id == color.Id  
-                                && (!searchOptions.Sizes.Any() || searchOptions.Sizes.Select(s => s.Id).Contains(c.Size.Id)));
+                    // I believe this Where is necessary in order to get correct number of shirts for filtered results.
+                    .Where(s => !searchOptions.Colors.Any() || searchOptions.Colors.Select(c => c.Id).Contains(s.Color.Id))
+                    .Where(c => c.Color.Id == color.Id)
+                    .Count(c => !searchOptions.Sizes.Any() || searchOptions.Sizes.Select(s => s.Id).Contains(c.Size.Id));
 
                 Assert.That(colorCount.Count, Is.EqualTo(expectedColorCount),
                     $"Color count for '{colorCount.Color.Name}' showing '{colorCount.Count}' should be '{expectedColorCount}'");

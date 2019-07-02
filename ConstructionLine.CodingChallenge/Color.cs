@@ -15,7 +15,6 @@ namespace ConstructionLine.CodingChallenge
             Name = name;
         }
 
-
         public static Color Red = new Color(Guid.NewGuid(), "Red");
         public static Color Blue = new Color(Guid.NewGuid(), "Blue");
         public static Color Yellow = new Color(Guid.NewGuid(), "Yellow");

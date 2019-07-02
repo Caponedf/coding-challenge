@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace ConstructionLine.CodingChallenge
 {
+    /// <summary>
+    /// Search engine implementation that always iterate all shirts without any index.
+    /// </summary>
     public class SearchEngineNoIndex : ISearchEngine
     {
         private readonly List<Shirt> _shirts;
@@ -30,19 +33,11 @@ namespace ConstructionLine.CodingChallenge
                 var colorMath = !options.Colors.Any() || options.Colors.Any(a => a.Id == shirt.Color.Id);
                 var sizeMath = !options.Sizes.Any() || options.Sizes.Any(a => a.Id == shirt.Size.Id);
 
-                if (colorMath)
-                {
-                    sizeCounts[shirt.Size.Id].Count++;
-                }
-
-                if (sizeMath)
-                {
-                    colorCounts[shirt.Color.Id].Count++;
-                }
-
                 if (colorMath && sizeMath)
                 {
                     shirts.Add(shirt);
+                    sizeCounts[shirt.Size.Id].Count++;
+                    colorCounts[shirt.Color.Id].Count++;
                 }
             }
 

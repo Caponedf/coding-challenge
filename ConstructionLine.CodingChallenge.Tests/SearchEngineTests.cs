@@ -34,6 +34,36 @@ namespace ConstructionLine.CodingChallenge.Tests
             AssertColorCounts(shirts, searchOptions, results.ColorCounts);
         }
 
+
+        [Test]
+        [TestCase(typeof(SearchEngineNoIndex))]
+        [TestCase(typeof(SearchEngineWithIndex))]
+        public void Test2(Type searchEngineType)
+        {
+            var shirts = new List<Shirt>
+            {
+                new Shirt(Guid.NewGuid(), "Red - Small", Size.Small, Color.Red),
+                new Shirt(Guid.NewGuid(), "Black - Medium", Size.Medium, Color.Black),
+                new Shirt(Guid.NewGuid(), "Blue - Large", Size.Large, Color.Red),
+            };
+
+            var searchEngine = GetSearchEngines(shirts)[searchEngineType];
+
+            var searchOptions = new SearchOptions
+            {
+                Sizes = new List<Size> { Size.Large }
+            };
+
+            var results = searchEngine.Search(searchOptions);
+
+            Assert.AreEqual(1, results.ColorCounts.First(f => f.Color.Id == Color.Red.Id).Count);
+            Assert.AreEqual(1, results.SizeCounts.First(f => f.Size.Id == Size.Large.Id).Count);
+
+            AssertResults(results.Shirts, searchOptions);
+            AssertSizeCounts(shirts, searchOptions, results.SizeCounts);
+            AssertColorCounts(shirts, searchOptions, results.ColorCounts);
+        }
+
         [Test]
         [TestCase(typeof(SearchEngineNoIndex))]
         [TestCase(typeof(SearchEngineWithIndex))]
